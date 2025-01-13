@@ -1,6 +1,5 @@
 package org.wildcodeschool.MyBlog.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -74,4 +73,41 @@ public class ArticleController {
         articleRepository.delete(article);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/search-title")
+    public ResponseEntity<List<Article>> getArticlesByTitle(@RequestParam String searchTerms) {
+        List<Article> articles = articleRepository.findByTitle(searchTerms);
+        if (articles.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(articles);
+    }
+
+    @GetMapping("/search-content")
+    public ResponseEntity<List<Article>> getArticlesByContent(@RequestParam String searchTerms) {
+        List<Article> articles = articleRepository.queryArticlesByContent(searchTerms);
+        if (articles.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(articles);
+    }
+
+    @GetMapping("/search-date")
+    public ResponseEntity<List<Article>> getArticlesCreateAfter(@RequestParam String searchTerms) {
+        List<Article> articles = articleRepository.queryArticleByCreatedAtAfter(LocalDateTime.parse(searchTerms));
+        if (articles.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(articles);
+    }
+
+    @GetMapping("/search-latest")
+    public ResponseEntity<List<Article>> getFiveLastArticles(@RequestParam String searchTerms) {
+        List<Article> articles = articleRepository.findTop5ByOrderByCreatedAtDesc(LocalDateTime.parse(searchTerms));
+        if (articles.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(articles);
+    }
+
 }
