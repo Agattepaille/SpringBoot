@@ -11,8 +11,8 @@
 	<groupId>org.wildcodeschool</groupId>
 	<artifactId>MyBlog</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>My Bloga</name>
-	<description>Demo project My Blog for Spring Boot</description>
+	<name>MyBlog</name>
+	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>
 		<license/>
