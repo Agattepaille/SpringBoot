@@ -33,4 +33,4 @@ build/
 .vscode/
 
 ### Connexion MySQL ###
-src/main/resources/application.properties
+MyBlog/src/main/resources/application.properties
