@@ -20,10 +20,10 @@ public class ArticleController {
 
     public ArticleController(
             ArticleRepository articleRepository,
-            CategoryRepository categoryRepository, CategoryRepository categoryRepository1
+            CategoryRepository categoryRepository
     ) {
         this.articleRepository = articleRepository;
-        this.categoryRepository = categoryRepository1;
+        this.categoryRepository = categoryRepository;
     }
 
     // Méthodes CRUD
