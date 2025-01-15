@@ -8,9 +8,12 @@ import java.util.List;
 
 public interface ArticleRepository extends JpaRepository<Article, Long> {
     List<Article> findByTitle(String title);
-    List<Article> queryArticlesByContent(String content);
-    List<Article> queryArticleByCreatedAtAfter (LocalDateTime createdAt);
-    List<Article> findTop5ByOrderByCreatedAtDesc(LocalDateTime createdAt);
+
+    List<Article> findArticlesByContentContaining(String content);
+
+    List<Article> findArticlesByCreatedAtAfter(LocalDateTime createdAt);
+
+    List<Article> findTop5ByOrderByCreatedAtDesc();
 
 
 
