@@ -2,10 +2,10 @@ package org.wildcodeschool.MyBlog.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.wildcodeschool.MyBlog.dto.ArticleAuthorDTO;
 import org.wildcodeschool.MyBlog.dto.AuthorDTO;
 import org.wildcodeschool.MyBlog.model.Author;
 import org.wildcodeschool.MyBlog.repository.AuthorRepository;
-
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -72,6 +72,17 @@ public class AuthorController {
     private AuthorDTO convertToDTO(Author author) {
         AuthorDTO authorDTO = new AuthorDTO();
         authorDTO.setId(author.getId());
+        authorDTO.setFirstname(author.getFirstname());
+        authorDTO.setLastname(author.getLastname());
+        authorDTO.setArticleAuthorDTOs(author.getArticleAuthors().stream()
+                .filter(articleAuthor -> articleAuthor.getArticle() != null)
+                .map(articleAuthor -> {
+                    ArticleAuthorDTO articleAuthorDTO = new ArticleAuthorDTO();
+                    articleAuthorDTO.setArticleId(articleAuthor.getArticle().getId());
+                    articleAuthorDTO.setContribution(articleAuthor.getContribution());
+                    return articleAuthorDTO;
+                })
+                .collect(Collectors.toList()));
 
         return authorDTO;
     }

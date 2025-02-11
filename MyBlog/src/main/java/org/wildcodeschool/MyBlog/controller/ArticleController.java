@@ -61,7 +61,7 @@ public class ArticleController {
         article.setCreatedAt(LocalDateTime.now());
         article.setUpdatedAt(LocalDateTime.now());
 
-        if(article.getCategory() != null) {
+        if (article.getCategory() != null) {
             Category category = categoryRepository.findById(article.getCategory().getId()).orElse(null);
             if (category == null) {
                 return ResponseEntity.notFound().build();
@@ -91,6 +91,7 @@ public class ArticleController {
 
         Article savedArticle = articleRepository.save(article);
 
+        // ajout des auteurs dans la table de jointure
         if (article.getArticleAuthors() != null) {
             for (ArticleAuthor articleAuthor : article.getArticleAuthors()) {
                 Author author = articleAuthor.getAuthor();
@@ -100,7 +101,6 @@ public class ArticleController {
                 }
                 articleAuthor.setAuthor(author);
                 articleAuthor.setArticle(savedArticle);
-                articleAuthor.setContribution(articleAuthor.getContribution());
 
                 articleAuthorRepository.save(articleAuthor);
             }
@@ -257,13 +257,15 @@ public class ArticleController {
             articleDTO.setImageUrls(article.getImages().stream().map(Image::getUrl).collect(Collectors.toList()));
         }
         if (article.getArticleAuthors() != null) {
-            articleDTO.setAuthors(article.getArticleAuthors().stream()
+            articleDTO.setAuthorDTOs(article.getArticleAuthors().stream()
                     .filter(articleAuthor -> articleAuthor.getAuthor() != null)
                     .map(articleAuthor -> {
                         AuthorDTO authorDTO = new AuthorDTO();
                         authorDTO.setId(articleAuthor.getAuthor().getId());
                         authorDTO.setFirstname(articleAuthor.getAuthor().getFirstname());
                         authorDTO.setLastname(articleAuthor.getAuthor().getLastname());
+                        authorDTO.setContribution(articleAuthor.getContribution());
+
                         return authorDTO;
                     })
                     .collect(Collectors.toList()).reversed());

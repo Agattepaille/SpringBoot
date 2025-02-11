@@ -1,13 +1,15 @@
 package org.wildcodeschool.MyBlog.dto;
 
-import org.wildcodeschool.MyBlog.model.ArticleAuthor;
+import java.util.List;
 
 public class AuthorDTO {
 
     private Long id;
     private String lastname;
     private String firstname;
-    private ArticleAuthor articleAuthor;
+    private String contribution;
+
+    private List<ArticleAuthorDTO> articleAuthorDTOs;
 
     public Long getId() {
         return id;
@@ -33,12 +35,19 @@ public class AuthorDTO {
         this.firstname = firstname;
     }
 
-    public ArticleAuthor getArticleAuthor() {
-        return articleAuthor;
+    public String getContribution() {
+        return contribution;
     }
 
-    public void setArticleAuthor(ArticleAuthor articleAuthor) {
-        this.articleAuthor = articleAuthor;
+    public void setContribution(String contribution) {
+        this.contribution = contribution;
     }
 
+    public List<ArticleAuthorDTO> getArticleAuthorDTOs() {
+        return articleAuthorDTOs;
+    }
+
+    public void setArticleAuthorDTOs(List<ArticleAuthorDTO> articleAuthorDTOs) {
+        this.articleAuthorDTOs = articleAuthorDTOs;
+    }
 }
