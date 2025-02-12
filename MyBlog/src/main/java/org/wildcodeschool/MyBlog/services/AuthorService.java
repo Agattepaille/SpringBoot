@@ -2,11 +2,13 @@ package org.wildcodeschool.MyBlog.services;
 
 import org.springframework.stereotype.Service;
 import org.wildcodeschool.MyBlog.dto.AuthorDTO;
+import org.wildcodeschool.MyBlog.exception.ResourceNotFoundException;
 import org.wildcodeschool.MyBlog.mapper.AuthorMapper;
 import org.wildcodeschool.MyBlog.model.Author;
 import org.wildcodeschool.MyBlog.repository.ArticleAuthorRepository;
 import org.wildcodeschool.MyBlog.repository.AuthorRepository;
 
+import java.lang.module.ResolutionException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,10 +32,8 @@ public class AuthorService {
     }
 
     public AuthorDTO getAuthorById(Long id) {
-        Author author = authorRepository.findById(id).orElse(null);
-        if (author == null) {
-            return null;
-        }
+        Author author = authorRepository.findById(id)
+                .orElseThrow(() -> new ResolutionException("L'auteur avec l'id " + id + " n'a pas été trouvé"));
         return authorMapper.convertToDTO(author);
     }
 
@@ -43,10 +43,8 @@ public class AuthorService {
     }
 
     public AuthorDTO updateAuthor(Long id, Author authorDetails) {
-        Author author = authorRepository.findById(id).orElse(null);
-        if (author == null) {
-            return null;
-        }
+        Author author = authorRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("L'auteur avec l'id " + id + " n'a pas été trouvé"));
         author.setFirstname(authorDetails.getFirstname());
         author.setLastname(authorDetails.getLastname());
         Author updatedAuthor = authorRepository.save(author);
@@ -54,10 +52,8 @@ public class AuthorService {
     }
 
     public boolean deleteAuthor(Long id) {
-        Author author = authorRepository.findById(id).orElse(null);
-        if (author == null) {
-            return false;
-        }
+        Author author = authorRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("L'auteur avec l'id " + id + " n'a pas été trouvé"));
 
         articleAuthorRepository.deleteAll(author.getArticleAuthors());
         authorRepository.delete(author);

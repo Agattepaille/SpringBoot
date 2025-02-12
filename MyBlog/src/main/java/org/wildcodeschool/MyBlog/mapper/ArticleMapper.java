@@ -34,6 +34,7 @@ public class ArticleMapper {
                     })
                     .collect(Collectors.toList()));
         }
+
         return articleDTO;
     }
 }

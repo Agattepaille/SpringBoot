@@ -2,11 +2,12 @@ package org.wildcodeschool.MyBlog.services;
 
 import org.springframework.stereotype.Component;
 import org.wildcodeschool.MyBlog.dto.ImageDTO;
-import org.wildcodeschool.MyBlog.mapper.ArticleMapper;
+import org.wildcodeschool.MyBlog.exception.ResourceNotFoundException;
 import org.wildcodeschool.MyBlog.mapper.ImageMapper;
 import org.wildcodeschool.MyBlog.model.Article;
 import org.wildcodeschool.MyBlog.model.Image;
-import org.wildcodeschool.MyBlog.repository.*;
+import org.wildcodeschool.MyBlog.repository.ArticleRepository;
+import org.wildcodeschool.MyBlog.repository.ImageRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,26 +16,15 @@ import java.util.stream.Collectors;
 @Component
 public class ImageService {
     private final ArticleRepository articleRepository;
-    private final ArticleMapper articleMapper;
-    private final CategoryRepository categoryRepository;
     private final ImageRepository imageRepository;
-    private final AuthorRepository authorRepository;
-    private final ArticleAuthorRepository articleAuthorRepository;
     private final ImageMapper imageMapper;
 
     public ImageService(
             ArticleRepository articleRepository,
-            ArticleMapper articleMapper,
-            CategoryRepository categoryRepository,
             ImageRepository imageRepository,
-            AuthorRepository authorRepository,
-            ArticleAuthorRepository articleAuthorRepository, ImageMapper imageMapper) {
+            ImageMapper imageMapper) {
         this.articleRepository = articleRepository;
-        this.articleMapper = articleMapper;
-        this.categoryRepository = categoryRepository;
         this.imageRepository = imageRepository;
-        this.authorRepository = authorRepository;
-        this.articleAuthorRepository = articleAuthorRepository;
         this.imageMapper = imageMapper;
     }
 
@@ -57,10 +47,8 @@ public class ImageService {
     }
 
     public ImageDTO updateImage(Long id, Image imageDetails) {
-        Image image = imageRepository.findById(id).orElse(null);
-        if (image == null) {
-            return null;
-        }
+        Image image = imageRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("L'image avec l'id " + id + " n'a pas été trouvé"));
         image.setUrl(imageDetails.getUrl());
 
         // Mise à jour des articles
@@ -68,12 +56,14 @@ public class ImageService {
             List<Article> validArticles = new ArrayList<>();
             for (Article article : imageDetails.getArticles()) {
                 if (article.getId() != null) {
-                    Article existingArticle = articleRepository.findById(image.getId()).orElse(null);
+                    Article existingArticle = articleRepository.findById(image.getId())
+                            .orElseThrow(() -> new ResourceNotFoundException("L'article avec l'id " + article.getId() + " n'a pas été trouvé"));
                     if (existingArticle != null) {
                         validArticles.add(existingArticle);
-                    } else {
-                        return null;
                     }
+//                    else {
+//                        return null;
+//                    }
                 } else {
                     Article savedArticle = articleRepository.save(article);
                     validArticles.add(savedArticle);
@@ -89,10 +79,8 @@ public class ImageService {
     }
 
     public boolean deleteImage(Long id) {
-        Image image = imageRepository.findById(id).orElse(null);
-        if (image == null) {
-            return false;
-        }
+        Image image = imageRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("L'image avec l'id " + id + " n'a pas été trouvé"));
 
         imageRepository.delete(image);
         return true;
