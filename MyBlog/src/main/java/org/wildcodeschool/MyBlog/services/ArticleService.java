@@ -1,6 +1,7 @@
 package org.wildcodeschool.MyBlog.services;
 
 import org.springframework.stereotype.Service;
+import org.wildcodeschool.MyBlog.dto.ArticleCreateDTO;
 import org.wildcodeschool.MyBlog.dto.ArticleDTO;
 import org.wildcodeschool.MyBlog.exception.ResourceNotFoundException;
 import org.wildcodeschool.MyBlog.mapper.ArticleMapper;
@@ -48,9 +49,8 @@ public class ArticleService {
         return articleMapper.convertToDTO(article);
     }
 
-    public ArticleDTO createArticle(Article article) {
-        article.setCreatedAt(LocalDateTime.now());
-        article.setUpdatedAt(LocalDateTime.now());
+    public ArticleDTO createArticle(ArticleCreateDTO articleCreateDTO) {
+        Article article = articleMapper.convertToEntity(articleCreateDTO);
 
         // Gestion de la catégorie
         if (article.getCategory() != null) {
