@@ -23,5 +23,6 @@ public class ImageMapper {
     public Image convertToEntity(ImageDTO imageDTO) {
         Image image = new Image();
         image.setUrl(imageDTO.getUrl());
+        return image;
     }
 }
