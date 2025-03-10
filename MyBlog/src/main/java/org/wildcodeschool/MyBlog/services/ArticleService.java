@@ -1,10 +1,13 @@
 package org.wildcodeschool.MyBlog.services;
 
 import org.springframework.stereotype.Service;
+import org.wildcodeschool.MyBlog.dto.ArticleAuthorDTO;
 import org.wildcodeschool.MyBlog.dto.ArticleCreateDTO;
 import org.wildcodeschool.MyBlog.dto.ArticleDTO;
+import org.wildcodeschool.MyBlog.dto.ImageDTO;
 import org.wildcodeschool.MyBlog.exception.ResourceNotFoundException;
 import org.wildcodeschool.MyBlog.mapper.ArticleMapper;
+import org.wildcodeschool.MyBlog.mapper.ImageMapper;
 import org.wildcodeschool.MyBlog.model.*;
 import org.wildcodeschool.MyBlog.repository.*;
 
@@ -22,6 +25,7 @@ public class ArticleService {
     private final ImageRepository imageRepository;
     private final AuthorRepository authorRepository;
     private final ArticleAuthorRepository articleAuthorRepository;
+    private final ImageMapper imageMapper;
 
     public ArticleService(
             ArticleRepository articleRepository,
@@ -29,13 +33,15 @@ public class ArticleService {
             CategoryRepository categoryRepository,
             ImageRepository imageRepository,
             AuthorRepository authorRepository,
-            ArticleAuthorRepository articleAuthorRepository) {
+            ArticleAuthorRepository articleAuthorRepository,
+            ImageMapper imageMapper) {
         this.articleRepository = articleRepository;
         this.articleMapper = articleMapper;
         this.categoryRepository = categoryRepository;
         this.imageRepository = imageRepository;
         this.authorRepository = authorRepository;
         this.articleAuthorRepository = articleAuthorRepository;
+        this.imageMapper = imageMapper;
     }
 
     public List<ArticleDTO> getAllArticles() {
@@ -53,26 +59,42 @@ public class ArticleService {
         Article article = articleMapper.convertToEntity(articleCreateDTO);
 
         // Gestion de la catégorie
-        if (article.getCategory() != null) {
-            Category category = categoryRepository.findById(article.getCategory().getId())
+        if (articleCreateDTO.getCategoryId() != null) {
+            Category category = categoryRepository.findById(articleCreateDTO.getCategoryId())
                     .orElseThrow(() -> new ResourceNotFoundException("La catégorie avec l'id " + article.getCategory().getId() + " n'a pas été trouvée"));
             article.setCategory(category);
         }
 
         // Gestion des images
-        if (article.getImages() != null && !article.getImages().isEmpty()) {
-            processImages(article, article);
+        if (articleCreateDTO.getImages() != null && !articleCreateDTO.getImages().isEmpty()) {
+            List<Image> validImages = new ArrayList<>();
+            for (ImageDTO imageDTO : articleCreateDTO.getImages()) {
+                if (imageDTO.getId() != null) {
+                    Image existingImage = imageRepository.findById(imageDTO.getId()).orElse(null);
+                    if (existingImage != null) {
+                        validImages.add(existingImage);
+                    } else {
+                        return null;
+                    }
+                } else {
+                    Image savedImage = imageRepository.save(image);
+                    validImages.add(savedImage);
+                }
+            }
+            article.setImages(validImages);
         }
 
         Article savedArticle = articleRepository.save(article);
 
         // Gestion des auteurs
-        if (article.getArticleAuthors() != null) {
-            for (ArticleAuthor articleAuthor : article.getArticleAuthors()) {
-                Author author = articleAuthor.getAuthor();
-                author = authorRepository.findById(author.getId())
-                        .orElseThrow(() -> new ResourceNotFoundException("L'auteur avec l'id " + articleAuthor.getAuthor().getId() + " n'a pas été trouvé"));
-                articleAuthor.setAuthor(author);
+        if (articleCreateDTO.getAuthors() != null) {
+            for (ArticleAuthorDTO articleAuthorDTO : article.getArticleAuthors()) {
+                Long authorId = articleAuthorDTO.getAuthorId();
+                Author author = authorRepository.findById(authorId)
+                        .orElseThrow(() -> new ResourceNotFoundException("L'auteur avec l'id " + articleAuthorDTO.getAuthorId() + " n'a pas été trouvé"));
+
+                ArticleAuthor articleAuthor = new ArticleAuthor();
+                articleAuthor.setAuthor(articleAuthorDTO);
                 articleAuthor.setArticle(savedArticle);
                 articleAuthor.setContribution(articleAuthor.getContribution());
 
@@ -144,7 +166,7 @@ public class ArticleService {
         return true;
     }
 
-    private void processImages(Article articleDetails, Article article) {
+    private void processImages(Article articleDetails, ArticleCreateDTO articleCreateDTO) {
         List<Image> validImages = new ArrayList<>();
         for (Image image : articleDetails.getImages()) {
             if (image.getId() != null) {
@@ -158,6 +180,7 @@ public class ArticleService {
 //                        return null;
 //                    }
             } else {
+
                 Image savedImage = imageRepository.save(image);
                 validImages.add(savedImage);
             }

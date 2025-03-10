@@ -7,7 +7,6 @@ import org.wildcodeschool.MyBlog.dto.AuthorDTO;
 import org.wildcodeschool.MyBlog.model.Article;
 import org.wildcodeschool.MyBlog.model.Image;
 
-import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 @Component
@@ -44,8 +43,6 @@ public class ArticleMapper {
         Article article = new Article();
         article.setTitle(articleCreateDTO.getTitle());
         article.setContent(articleCreateDTO.getContent());
-        article.setUpdatedAt(LocalDateTime.now());
-        article.setCreatedAt(LocalDateTime.now());
 
         return article;
     }
