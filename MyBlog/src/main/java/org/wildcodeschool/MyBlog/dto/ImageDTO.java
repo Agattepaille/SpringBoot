@@ -10,7 +10,7 @@ public class ImageDTO {
     @URL(message = "L'URL de l'image doit être valide")
     private String url;
 
-    private List<ArticleDTO> articles;
+    private List<Long> articleIds;
 
     // Getters et setters
 
@@ -30,11 +30,11 @@ public class ImageDTO {
         this.url = url;
     }
 
-    public List<ArticleDTO> getArticles() {
-        return articles;
+    public List<Long> getArticleIds() {
+        return articleIds;
     }
 
     public void setArticleIds(List<Long> articleIds) {
-        this.articles = articles;
+        this.articleIds = articleIds;
     }
 }

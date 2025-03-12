@@ -48,6 +48,9 @@ public class ArticleController {
     @PostMapping
     public ResponseEntity<ArticleDTO> createArticle(@Valid @RequestBody ArticleCreateDTO articleCreateDTO) {
         ArticleDTO savedArticleDTO = articleService.createArticle(articleCreateDTO);
+        if (savedArticleDTO == null) {
+            return ResponseEntity.badRequest().build();
+        }
         return ResponseEntity.status(HttpStatus.CREATED).body(savedArticleDTO);
     }
 
