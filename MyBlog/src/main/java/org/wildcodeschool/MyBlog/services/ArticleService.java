@@ -178,10 +178,6 @@ public class ArticleService {
                 if (existingImage != null) {
                     validImages.add(existingImage);
                 }
-                // le else est-il nécessaire ici avec l'ajout d'une exception ?
-//                else {
-//                        return null;
-//                    }
             } else {
 
                 Image savedImage = imageRepository.save(image);
