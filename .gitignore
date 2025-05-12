@@ -33,3 +33,4 @@ build/
 
 ### VS Code ###
 .vscode/
+/MyBlog/src/main/resources/env.properties
